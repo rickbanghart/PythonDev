@@ -16,9 +16,9 @@ class Example(Frame):
         self.pack(fill=BOTH, expand=1)
         
 
-def update_color(red, green, blue, dmc):
-    query = "INSERT INTO colors (red, green, blue, dmc) VALUES (%s,%s,%s,%s)"
-    data = (red, green, blue,dmc)
+def save_color(red, green, blue, dmc,rgb,description,row):
+    query = "INSERT INTO colorsAJ (red, green, blue, dmc, rgb, description, row) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+    data = (red, green, blue,dmc,rgb,description,row)
     cursor.execute(query,data)
     cnx.commit()
     
@@ -35,22 +35,30 @@ cnx = mysql.connector.connect(user='root', password='',
                               database='test')
 cursor = cnx.cursor()
 
-fname = 'DMCFlossRGB.csv'
+fname = '../docs/DMCFlossRGB.csv'
 
 
-root = Tk()
-root.geometry("250x150+300+300")
-app = Example(root)
-root.mainloop()
+#root = Tk()
+#root.geometry("250x150+300+300")
+#app = Example(root)
+#root.mainloop()
 
-#fh = open(fname,'r')
+fh = open(fname,'r')
 my_list = []
 all_text = '';
 with open(fname,'r') as fh:
     reader = csv.reader(fh)
     
     for row in reader:
-        print row[0]
+        dmc = row[0]
+        description = row[1]        
+        red = row[2]
+        green = row[3]
+        blue = row[4]
+        rgb = row[5]
+        rowDesc = row[6]
+        save_color(red, green, blue, dmc,rgb,description,rowDesc)
+        print description
    
 
 cnx.close()
