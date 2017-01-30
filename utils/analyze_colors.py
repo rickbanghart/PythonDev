@@ -1,6 +1,8 @@
 import mysql.connector
-from classes.ColorObj import *
-        
+import math
+from ColorObj import *
+from operator import itemgetter  
+      
 def to_hex(num):
     num = int(num)
     if num < 16:
@@ -15,6 +17,14 @@ def colorDistance(c1, c2):
         + (c1.blue - c2.blue) * (c1.blue - c2.blue))
     return distance    
 
+def closestColors(colorTuple,srcObj):
+    colorsDistance = []
+    for color in colorTuple:
+        distance = colorDistance(color,srcObj)
+        colorsDistance.append({'distance':distance,'dmc':color.colorName})
+    neighbors = sorted(colorsDistance, key=itemgetter('distance'))
+    return neighbors
+
 cnx = mysql.connector.connect(user='root', password='',
                               host='127.0.0.1',
                               database='test')
@@ -22,8 +32,13 @@ cursor = cnx.cursor()
 query = "SELECT red, green, blue, dmc FROM colorsAJ"
 cursor.execute(query)
 colors = cursor.fetchall()
+colorList = []
 for row in colors:
-    color_list.append(colorObj(row[0], row[1], row[2], row[3]))
-print color_list
+    colorList.append(colorObj(row[0], row[1], row[2], row[3]))
+colorTuple = tuple(colorList)
+
+print len(colorTuple)
+neighbors = closestColors(colorTuple,colorTuple[25])
+print neighbors
 
 cnx.close()
